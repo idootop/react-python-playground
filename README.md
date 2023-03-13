@@ -1,1 +1,3 @@
-# vite-typescript-template
+# React python playground
+
+🐍 A python playground running on broswer.

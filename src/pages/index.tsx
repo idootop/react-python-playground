@@ -1,7 +1,10 @@
 import { Center } from '@/components/Flex';
 import { Text } from '@/components/Text';
 
+import { useInitAPP } from './initAPP';
+
 export const App = () => {
+  useInitAPP();
   return (
     <Center width="100%" height="100vh">
       <Center background={'pink'} size="200px">
