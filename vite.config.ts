@@ -58,6 +58,22 @@ export default defineConfig({
         ],
       },
     }),
+    // Web worker
+    {
+      name: 'replace-string',
+      transform(code, id) {
+        if (id.includes('worker.ts')) {
+          const newCode = code.replace(
+            'export class PythonWorker',
+            'class PythonWorker',
+          );
+          return {
+            code: newCode,
+            map: null,
+          };
+        }
+      },
+    },
   ],
   envPrefix: 'k',
   resolve: {
