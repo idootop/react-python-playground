@@ -48,11 +48,12 @@ export default defineConfig({
         ],
       },
     }),
-    // Web worker
+    // 字符串替换
     {
       name: 'replace-string',
-      transform(code, id) {
-        if (id.includes('worker.ts')) {
+      transform(code, path) {
+        // Web worker
+        if (path.includes('python/worker.ts')) {
           const newCode = code.replace(
             'export class PythonWorker',
             'class PythonWorker',
@@ -68,12 +69,18 @@ export default defineConfig({
     {
       name: 'compress-html',
       transformIndexHtml(html) {
-        return minify(html, {
-          removeComments: true, // 移除HTML中的注释
-          collapseWhitespace: true, // 折叠空白区域
-          minifyJS: true, // 压缩页面JS
-          minifyCSS: true, // 压缩页面CSS
-        });
+        return minify(
+          // html 模版字符串替换
+          html
+            .replace('{{title}}', title)
+            .replace('{{description}}', description),
+          {
+            removeComments: true, // 移除HTML中的注释
+            collapseWhitespace: true, // 折叠空白区域
+            minifyJS: true, // 压缩页面JS
+            minifyCSS: true, // 压缩页面CSS
+          },
+        );
       },
     },
   ],
