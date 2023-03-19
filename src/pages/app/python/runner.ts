@@ -1,7 +1,5 @@
 import { proxy, Remote, wrap } from 'comlink';
 
-import pTimeout from '@/utils/p-timeout';
-
 import type { PythonWorker } from './worker';
 
 class PythonRunner {
@@ -17,7 +15,7 @@ class PythonRunner {
     stderr?: (msg: string) => void;
   }): Promise<boolean> {
     if (this.inited) return true;
-    const { stdout = console.log, stderr = console.error } = props ?? {};
+    const { stdout = console.log, stderr = stdout } = props ?? {};
     try {
       this.worker = new Worker(new URL('./worker.ts', import.meta.url));
       this.runner = wrap<PythonWorker>(this.worker);
@@ -34,21 +32,20 @@ class PythonRunner {
     }
   }
 
-  async run(
-    code: string,
-    props?: {
-      /**
-       * 运行超时时间，默认一分钟
-       */
-      timeout: number;
-    },
-  ) {
+  async run(code: string) {
     await this.init();
-    const { timeout = 60000 } = props ?? {};
-    return pTimeout(this.runner!.run(code), timeout).catch(() => '❌ 运行超时');
+    return await this.runner!.run(code);
+  }
+
+  /**
+   * 中断执行
+   */
+  interruptExecution() {
+    this.runner?.interruptExecution();
   }
 
   dispose() {
+    this.interruptExecution();
     this.runner?.dispose();
     this.worker?.terminate();
     this.runner = undefined;

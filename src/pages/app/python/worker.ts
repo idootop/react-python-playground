@@ -17,11 +17,18 @@ export class PythonWorker {
     return this.pyodide !== undefined;
   }
   async run(code: string) {
-    await this.pyodide.runPythonAsync(code);
+    // 取消中断
+    this.pyodide.setInterruptBuffer([0]);
+    return await this.pyodide.runPythonAsync(code);
   }
+
+  interruptExecution() {
+    // 设置 KeyboardInterrupt
+    this.pyodide.setInterruptBuffer([2]);
+  }
+
   dispose() {
     this.pyodide = undefined;
-    throw new Error('Execution interrupted');
   }
 }
 

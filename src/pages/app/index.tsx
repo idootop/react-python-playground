@@ -1,34 +1,23 @@
 import { Center, Column, Expand, Row } from '@/components/Flex';
-import { envs } from '@/utils/env';
 
-import { CodeEditor } from './editor';
+import { CodeEditor, getPythonCode } from './editor';
 import { useInitAPP } from './initAPP';
+import { usePython } from './python/usePython';
 
 export const App = () => {
   useInitAPP();
-  console.log('kTest', envs.kTest);
-
-  const $RUN = (
-    <Center
-      background="#76ed50"
-      padding="6px 12px"
-      borderRadius="8px"
-      cursor="pointer"
-    >
-      <span
-        style={{
-          fontWeight: '600',
-          fontSize: '16px',
-          color: '#000',
-        }}
-      >
-        Run
-      </span>
-    </Center>
-  );
 
   const $LOGO = (
-    <Row cursor="pointer">
+    <Row
+      cursor="pointer"
+      userSelect="none"
+      onClick={() =>
+        window.open(
+          'https://github.com/idootop/react-python-playground',
+          '_blank',
+        )
+      }
+    >
       <img src="logo.svg" height="24px" />
       <span
         style={{
@@ -53,11 +42,38 @@ export const App = () => {
       >
         {$LOGO}
         <Expand />
-        {$RUN}
+        <RUN />
       </Row>
       <Expand width="100%">
         <CodeEditor />
       </Expand>
     </Column>
+  );
+};
+
+const RUN = () => {
+  const python = usePython();
+
+  return (
+    <Center
+      background="#76ed50"
+      padding="6px 12px"
+      borderRadius="6px"
+      cursor="pointer"
+      userSelect="none"
+      onClick={() => {
+        python.runPython(getPythonCode());
+      }}
+    >
+      <span
+        style={{
+          fontWeight: '600',
+          fontSize: '16px',
+          color: '#000',
+        }}
+      >
+        {python.running ? 'Executing...' : 'Run'}
+      </span>
+    </Center>
   );
 };
