@@ -32,6 +32,7 @@ div:focus {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .hide-scollbar::-webkit-scrollbar {
   display: none;
 }

@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react-swc';
-import * as path from 'path';
+import { minify } from 'html-minifier';
+import { resolve } from 'path';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const title = 'Python playground';
@@ -12,19 +12,9 @@ export default defineConfig({
     react(),
     // 分包加载
     splitVendorChunkPlugin(),
-    // html 压缩 + 元数据替换
-    createHtmlPlugin({
-      minify: true,
-      inject: {
-        data: {
-          title,
-          description,
-        },
-      },
-    }),
     // PWA
     VitePWA({
-      outDir: 'dist/pwa',
+      outDir: resolve(__dirname, 'dist/pwa'),
       registerType: 'autoUpdate', //'prompt',
       workbox: {
         globPatterns: ['../**/*.{js,css,html,jpg,png,svg,gif}'],
@@ -74,10 +64,25 @@ export default defineConfig({
         }
       },
     },
+    // html 压缩
+    {
+      name: 'compress-html',
+      transformIndexHtml(html) {
+        return minify(html, {
+          removeComments: true, // 移除HTML中的注释
+          collapseWhitespace: true, // 折叠空白区域
+          minifyJS: true, // 压缩页面JS
+          minifyCSS: true, // 压缩页面CSS
+        });
+      },
+    },
   ],
+  root: 'src/pages',
+  publicDir: resolve(__dirname, 'public'),
+  envDir: resolve(__dirname, '.'),
   envPrefix: 'k',
   resolve: {
-    alias: [{ find: '@', replacement: path.resolve(__dirname, 'src/') }],
+    alias: [{ find: '@', replacement: resolve(__dirname, 'src/') }],
   },
   server: {
     host: '0.0.0.0',
@@ -87,6 +92,13 @@ export default defineConfig({
   },
   build: {
     minify: true,
+    outDir: resolve(__dirname, 'dist'),
     chunkSizeWarningLimit: 1024, // 1MB
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'src/pages/index.html'),
+        test: resolve(__dirname, 'src/pages/test/index.html'),
+      },
+    },
   },
 });
