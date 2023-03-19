@@ -4,8 +4,8 @@ import { resolve } from 'path';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-const title = 'Python playground';
-const description = '🐍 A python playground running on broswer.';
+const title = '🐍 Python';
+const description = 'A python playground running on broswer.';
 
 export default defineConfig({
   plugins: [
