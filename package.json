@@ -21,7 +21,10 @@
     "comlink": "^4.4.1",
     "isomorphic-unfetch": "^3.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "xterm": "^5.1.0",
+    "xterm-addon-fit": "^0.7.0",
+    "xterm-addon-web-links": "^0.8.0"
   },
   "devDependencies": {
     "@types/node": "^18.14.2",

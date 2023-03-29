@@ -35,6 +35,9 @@ specifiers:
   typescript: ^4.9.5
   vite: ^4.1.4
   vite-plugin-pwa: ^0.14.1
+  xterm: ^5.1.0
+  xterm-addon-fit: ^0.7.0
+  xterm-addon-web-links: ^0.8.0
 
 dependencies:
   '@codemirror/lang-python': 6.1.2_nhpyweho5i63az4d4hsuvsa7gy
@@ -46,6 +49,9 @@ dependencies:
   isomorphic-unfetch: 3.1.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  xterm: 5.1.0
+  xterm-addon-fit: 0.7.0_xterm@5.1.0
+  xterm-addon-web-links: 0.8.0_xterm@5.1.0
 
 devDependencies:
   '@types/node': 18.14.2
@@ -5307,6 +5313,26 @@ packages:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
     dev: true
+
+  /xterm-addon-fit/0.7.0_xterm@5.1.0:
+    resolution: {integrity: sha512-tQgHGoHqRTgeROPnvmtEJywLKoC/V9eNs4bLLz7iyJr1aW/QFzRwfd3MGiJ6odJd9xEfxcW36/xRU47JkD5NKQ==}
+    peerDependencies:
+      xterm: ^5.0.0
+    dependencies:
+      xterm: 5.1.0
+    dev: false
+
+  /xterm-addon-web-links/0.8.0_xterm@5.1.0:
+    resolution: {integrity: sha512-J4tKngmIu20ytX9SEJjAP3UGksah7iALqBtfTwT9ZnmFHVplCumYQsUJfKuS+JwMhjsjH61YXfndenLNvjRrEw==}
+    peerDependencies:
+      xterm: ^5.0.0
+    dependencies:
+      xterm: 5.1.0
+    dev: false
+
+  /xterm/5.1.0:
+    resolution: {integrity: sha512-LovENH4WDzpwynj+OTkLyZgJPeDom9Gra4DMlGAgz6pZhIDCQ+YuO7yfwanY+gVbn/mmZIStNOnVRU/ikQuAEQ==}
+    dev: false
 
   /yallist/3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}

@@ -29,11 +29,11 @@ div:focus {
 }
 
 /* 隐藏滚动条 */
-.hide-scollbar {
+.hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-.hide-scollbar::-webkit-scrollbar {
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }

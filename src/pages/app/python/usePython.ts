@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 
-import { store, useProvider, useStore } from '@/services/store/useStore';
+import { store, useStore } from '@/services/store/useStore';
+import { jsonDecode, jsonEncode } from '@/utils/base';
 import pTimeout from '@/utils/p-timeout';
 
+import { onStdErr, onStdOut } from '../Outputs';
 import { python } from './runner';
 
 const kPythonStatesKey = 'kPythonStates';
@@ -16,29 +18,32 @@ interface PythonStates {
   }[];
 }
 
+const getPythonStates = () =>
+  jsonDecode(jsonEncode(store.get(kPythonStatesKey))) ?? {};
+
 const loadPython = async () => {
-  const isLoading = store.get(kPythonStatesKey)!.loading;
+  const isLoading = getPythonStates().loading;
   if (isLoading) {
     // 避免重复加载
     return;
   } else {
     store.set(kPythonStatesKey, {
-      ...store.get(kPythonStatesKey)!,
+      ...getPythonStates(),
       loading: true,
     });
   }
   const success = await python.init({
     stdout: (msg) => {
-      console.log(msg);
-      const datas = store.get(kPythonStatesKey)!;
+      onStdOut(msg);
+      const datas = getPythonStates();
       store.set(kPythonStatesKey, {
         ...datas,
         outputs: [...datas.outputs, { msg, type: 'stdout' }],
       });
     },
     stderr: (msg) => {
-      console.error(msg);
-      const datas = store.get(kPythonStatesKey)!;
+      onStdErr(msg);
+      const datas = getPythonStates();
       store.set(kPythonStatesKey, {
         ...datas,
         outputs: [...datas.outputs, { msg, type: 'stderr' }],
@@ -46,27 +51,28 @@ const loadPython = async () => {
     },
   });
   store.set(kPythonStatesKey, {
-    ...store.get(kPythonStatesKey)!,
+    ...getPythonStates(),
     loading: false,
     inited: success,
   });
 };
 
-export const usePython = () => {
-  useProvider<PythonStates>(kPythonStatesKey, {
-    loading: false,
-    inited: false,
+export const interruptExecution = () => {
+  python.interruptExecution();
+  store.set(kPythonStatesKey, {
+    ...getPythonStates(),
     running: false,
-    outputs: [],
   });
+};
 
+export const usePython = () => {
   useEffect(() => {
     // 加载 Python worker runner
     loadPython();
   }, []);
 
   const [states, setStates] = useStore<PythonStates>(kPythonStatesKey);
-  const { loading, inited, running, outputs } = states;
+  const { loading, inited, running, outputs } = states ?? {};
 
   const runPython = async (
     code: string,
@@ -82,17 +88,20 @@ export const usePython = () => {
         // 重新加载 Python
         loadPython();
       }
-      return;
+      return 'loadPython';
     }
     setStates({
-      ...store.get(kPythonStatesKey)!,
+      ...getPythonStates(),
       running: true,
       outputs: [], //清空上次的输出
     });
     const { timeout = 60 * 60 * 1000 } = props ?? {};
+    const start = Date.now();
     await pTimeout(python.run(code), timeout).catch(() => '❌ 运行超时');
+    const time = Date.now() - start;
+    onStdOut(`\nDone in ${time}ms\n`);
     setStates({
-      ...store.get(kPythonStatesKey)!,
+      ...getPythonStates(),
       running: false,
     });
   };
@@ -100,12 +109,14 @@ export const usePython = () => {
   const interruptExecution = () => {
     python.interruptExecution();
     setStates({
-      ...store.get(kPythonStatesKey)!,
+      ...getPythonStates(),
       running: false,
     });
   };
 
   return {
+    inited,
+    loading,
     running,
     outputs,
     runPython,

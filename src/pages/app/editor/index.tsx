@@ -12,7 +12,7 @@ async def main():
     print(time.time())
     await asyncio.sleep(1)
 
-await main()`;
+main()`;
 
 const extensions = [python()];
 
