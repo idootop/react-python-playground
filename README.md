@@ -1,9 +1,5 @@
 # Python playground
 
-🐍 A python playground running on broswer.
+🐍 A python playground running on broswer. [Online Demo](https://react-python-playground.vercel.app/)
 
-## TODOs
-
-- 本地持久化存储代码
-- 代码运行结果弹窗
-- 加载 loading
+![](demo.jpg)

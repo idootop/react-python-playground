@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { store, useStore } from '@/services/store/useStore';
-import { jsonDecode, jsonEncode } from '@/utils/base';
+import { delay, jsonDecode, jsonEncode } from '@/utils/base';
 import pTimeout from '@/utils/p-timeout';
 
 import { onStdErr, onStdOut } from '../Outputs';
@@ -99,6 +99,7 @@ export const usePython = () => {
     const start = Date.now();
     await pTimeout(python.run(code), timeout).catch(() => '❌ 运行超时');
     const time = Date.now() - start;
+    await delay(100);
     onStdOut(`\nDone in ${time}ms\n`);
     setStates({
       ...getPythonStates(),
