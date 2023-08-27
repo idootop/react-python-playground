@@ -1,4 +1,4 @@
-import { Center, Column, Expand, Row } from '@/components/Flex';
+import { Center, Expand, Row } from '@/components/Flex';
 import { Spinner } from '@/components/Spinner';
 import { showToast, Toast } from '@/components/Toast';
 
@@ -40,21 +40,21 @@ export const App = () => {
       <Toast />
       <Loading />
       <Outputs />
-      <Column width="100%" height="100vh">
-        <Row
-          width="100%"
-          padding="16px 16px 16px 10px"
-          background="#0c0c0d"
-          marginBottom="10px"
-        >
-          {$LOGO}
-          <Expand />
-          <RUN />
-        </Row>
-        <Expand width="100%">
-          <CodeEditor />
-        </Expand>
-      </Column>
+      <Row
+        width="100%"
+        padding="16px 16px 16px 10px"
+        background="#0c0c0d"
+        marginBottom="10px"
+        position="fixed"
+        top="0"
+        left="0"
+        zIndex={1}
+      >
+        {$LOGO}
+        <Expand />
+        <RUN />
+      </Row>
+      <CodeEditor />
     </>
   );
 };

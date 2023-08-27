@@ -43,7 +43,7 @@ export const Outputs = () => {
       position="fixed"
       top="0"
       left="0"
-      zIndex={1}
+      zIndex={2}
       width="100vw"
       height="100vh"
       justifyContent="center"

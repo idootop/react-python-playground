@@ -31,6 +31,9 @@ export const CodeEditor = () => {
       onChange={(value) => {
         pythonCode = value;
       }}
+      style={{
+        paddingTop: '64px',
+      }}
     />
   );
 };
