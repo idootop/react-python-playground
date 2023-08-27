@@ -2,50 +2,83 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { isNotEqual } from '@/utils/diff';
 
-let _id = 0;
-export const newId = () => (_id++).toString();
-export const useId = () => useInit(() => newId());
-
-const _stores: Record<
+type GlobalStores = Record<
   string,
   { data: any; rebuilds: Record<string, () => void> }
-> = {};
+>;
 
-export const store = {
+class Global {
+  static key = 'global_store';
+
+  private static get _(): { id: number; stores: GlobalStores } {
+    if (typeof window === 'undefined') {
+      return { id: 0, stores: {} };
+    }
+    if (window[Global.key]) {
+      return window[Global.key] as any;
+    }
+    window[Global.key] = {
+      id: 0,
+      stores: {},
+    };
+    return window[Global.key];
+  }
+
+  static get id() {
+    return Global._.id;
+  }
+
+  static set id(n: number) {
+    Global._.id = n;
+  }
+
+  static get stores() {
+    return Global._.stores;
+  }
+}
+
+export const newId = () => (Global.id++).toString();
+export const useId = () => useInit(() => newId());
+
+class GlobalStore {
   get<T = any>(key: string): T | undefined {
-    return _stores[key]?.data;
-  },
+    return Global.stores[key]?.data;
+  }
   set(key: string, data: any) {
-    if (_stores[key]) {
-      if (isNotEqual(_stores[key].data, data)) {
-        _stores[key].data = data;
-        Object.values(_stores[key].rebuilds).forEach((rebuild) => rebuild());
+    if (Global.stores[key]) {
+      if (isNotEqual(Global.stores[key].data, data)) {
+        Global.stores[key].data = data;
+        Object.values(Global.stores[key].rebuilds).forEach((rebuild) =>
+          rebuild(),
+        );
       }
     } else {
-      _stores[key] = {
+      Global.stores[key] = {
         data: data,
         rebuilds: {},
       };
     }
-  },
+  }
   _addRebuildCallback(key: string, id: string, rebuild: () => void) {
-    if (_stores[key]) {
-      _stores[key].rebuilds[id] = rebuild;
+    if (Global.stores[key]) {
+      Global.stores[key].rebuilds[id] = rebuild;
     } else {
-      _stores[key] = {
+      Global.stores[key] = {
         data: undefined,
         rebuilds: {
           [id]: rebuild,
         },
       };
     }
-  },
+  }
   _removeRebuildCallback(key: string, id: string) {
-    if (_stores[key]) {
-      delete _stores[key].rebuilds[id];
+    if (Global.stores[key]) {
+      delete Global.stores[key].rebuilds[id];
     }
-  },
-};
+  }
+}
+
+export const store = new GlobalStore();
 
 /**
  * 初始化hook
@@ -54,7 +87,7 @@ export const store = {
  */
 export const useInit = <T>(fn: () => T, deps?: any[]): T => {
   const ref = useRef<any>({
-    result: 404,
+    result: 4041,
     deps: undefined,
   });
   if (ref.current.result === 404 || isNotEqual(ref.current.deps, deps)) {
@@ -197,7 +230,7 @@ export const useConsumer = <T = any>(
 
 export const useProvider = <T>(key: string, data: T | undefined) => {
   useInit(() => {
-    if (!_stores[key]) {
+    if (!Global.stores[key]) {
       // 只初始化一次
       store.set(key, data);
     }
