@@ -1,5 +1,4 @@
 import { Center, Expand, Row } from '@/components/Flex';
-import { Spinner } from '@/components/Spinner';
 import { showToast, Toast } from '@/components/Toast';
 
 import { CodeEditor, getPythonCode } from './editor';
@@ -38,7 +37,6 @@ export const App = () => {
   return (
     <>
       <Toast />
-      <Loading />
       <Outputs />
       <Row
         width="100%"
@@ -70,6 +68,10 @@ const RUN = () => {
       cursor="pointer"
       userSelect="none"
       onClick={async () => {
+        if (!python.inited) {
+          showToast('Python not loaded :(');
+          return;
+        }
         showOutputs(); // 打开弹窗
         const result = await python.runPython(getPythonCode());
         if (result === 'loadPython') {
@@ -85,27 +87,12 @@ const RUN = () => {
           color: '#000',
         }}
       >
-        {python.running ? 'Executing...' : 'Run'}
+        {!python.inited
+          ? 'Loading...'
+          : python.running
+          ? 'Executing...'
+          : 'Run'}
       </span>
-    </Center>
-  );
-};
-
-const Loading = () => {
-  const python = usePython();
-
-  return (
-    <Center
-      width="100vw"
-      height="100vh"
-      position="fixed"
-      top="0"
-      left="0"
-      zIndex={2}
-      background="rgba(0,0,0,0.3)"
-      visibility={python.inited ? 'hidden' : 'visible'}
-    >
-      <Spinner />
     </Center>
   );
 };

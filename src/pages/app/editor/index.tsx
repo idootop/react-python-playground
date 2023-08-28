@@ -8,9 +8,9 @@ const defaultPythonCode = `import time
 import asyncio
 
 async def main():
-  for i in range(3):
+  for i in range(100):
     print(time.time())
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.01)
 
 main()`;
 

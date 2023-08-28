@@ -66,6 +66,7 @@ export const Outputs = () => {
       </Row>
       <Column width="100%" height="70vh" padding="20px" maxWidth="1024px">
         <Box
+          className="hide-scrollbar"
           width="100%"
           height="100%"
           padding="20px"
